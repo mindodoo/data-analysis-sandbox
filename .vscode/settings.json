@@ -1,0 +1,12 @@
+{
+  "python.defaultInterpreterPath": "/Users/mindodoo/Projects/data_ana/.venv/bin/python",
+  "python.terminal.activateEnvironment": true,
+  "terminal.integrated.env.osx": {
+    "MPLCONFIGDIR": "${workspaceFolder}/.cache/matplotlib"
+  },
+  "jupyter.notebookFileRoot": "${workspaceFolder}",
+  "notebook.output.textLineLimit": 1000,
+  "files.exclude": {
+    "**/.ipynb_checkpoints": true
+  }
+}
