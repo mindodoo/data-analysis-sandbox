@@ -20,3 +20,10 @@ xlrd>=2.0
 # Statistics & ML (common in analysis workflows)
 scikit-learn>=1.3
 statsmodels>=0.14
+
+# Kaggle (download notebooks, datasets, competitions)
+kaggle>=1.7
+
+# TensorFlow (TF-DF pins tensorflow~=2.19 on macOS arm64)
+tensorflow>=2.19,<2.20
+tensorflow_decision_forests>=1.12

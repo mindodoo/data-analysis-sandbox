@@ -6,4 +6,10 @@ __pycache__/
 .DS_Store
 *.egg-info/
 .env
+kaggle.json
+.venv-kaggle/
 .jupyter/
+
+# Kaggle competition data (re-download with kaggle CLI)
+notebooks/kaggle/*.zip
+notebooks/kaggle/spaceship-titanic/
