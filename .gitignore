@@ -13,3 +13,7 @@ kaggle.json
 # Kaggle competition data (re-download with kaggle CLI)
 notebooks/kaggle/*.zip
 notebooks/kaggle/spaceship-titanic/
+notebooks/spaceship-titanic/
+
+# Archives (source folders are committed instead)
+multi_agent_data_science_markdowns.zip
