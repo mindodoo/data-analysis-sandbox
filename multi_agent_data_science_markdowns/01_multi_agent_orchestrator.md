@@ -31,6 +31,8 @@ You ensure:
 - Outputs are structured and auditable
 - Ask user to review and approve before end the job
 - Each agent hands off properly to the next agent
+- Each agents work and contribute inside a collaborated python notebook dedicated for that project
+- Each agents document their work in markdark separately
 
 --- 
 
