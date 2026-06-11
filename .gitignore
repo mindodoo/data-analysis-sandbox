@@ -9,6 +9,15 @@ __pycache__/
 kaggle.json
 .venv-kaggle/
 .jupyter/
+.vscode/
+
+# Local-only files (not part of the published workflow)
+\[DONT USE\] claude_multi_agent_data_science_workflow.md
+kaggle.json.example
+requirements.txt
+
+# CatBoost transient training logs
+catboost_info/
 
 # Kaggle competition data (re-download with kaggle CLI)
 notebooks/kaggle/*.zip

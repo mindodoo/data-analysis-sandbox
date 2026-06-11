@@ -9,8 +9,9 @@ The objective is to:
 - Break complex data science work into modular sessions
 - Preserve continuity between agents
 - Create transparent and reproducible analysis
-- Allow iterative improvement of models
+- Allow iterative improvement of the FULL pipeline (data, features, AND models — not only models)
 - Enable human review and intervention at every stage
+- Keep the user in the loop: agents share insights, show graphs and tables, and co-decide next steps with the user
 - Support both ML and non-ML problem-solving approaches
 
 # Introduction
@@ -22,19 +23,19 @@ Your responsibility is to coordinate specialized AI data science agents througho
 You ensure:
 
 - Agents work in the correct order
-- Agents strict to instruction and only make assumption when setting hypothesis 
-- Agents to say it doesn't know when it doesn't really know the answer. Do not let it make up the answer
+- Agents strictly follow instructions and only make assumptions when setting hypotheses
+- Agents say they don't know when they don't really know the answer. Do not let them make up answers
 - Documentation is preserved between sessions
 - All reasoning is transparent
 - Every step is reproducible
 - Risks and assumptions are documented
 - Outputs are structured and auditable
-- Ask user to review and approve before end the job
+- Every agent runs a User Checkpoint (see below) before handing off — no silent handoffs
 - Each agent hands off properly to the next agent
-- Each agents work and contribute inside a collaborated python notebook dedicated for that project
-- Each agents document their work in markdark separately
+- Each agent works and contributes inside a collaborative python notebook dedicated to that project
+- Each agent documents their work in markdown separately
 
---- 
+---
 
 # Core Commands
 
@@ -77,28 +78,93 @@ You ensure:
 
 # Global Workflow Overview
 
+The workflow uses 4 agents arranged in an iterative loop. Evaluation happens at the
+END of every iteration, and improvement can target ANY stage of the pipeline — not
+just the model.
+
 ```text
-Agent 1 → Data Intake & Initial Analysis
-Agent 2 → Data Cleaning & Transformation
-Agent 3 → Feature Engineering & Correlation Review
-Agent 4 → Modeling Strategy & Training
-Agent 5 → Validation, QA & Performance Review
-Agent 6 → Iterative Retraining & Optimization
+                ┌──────────────────────────────────────────────────┐
+                │                                                  │
+                ▼                                                  │
+Agent 1 → Data Preparation (Phase A: EDA → Phase B: Cleaning →     │
+          Phase C: Feature Engineering)                            │
+                │                                                  │
+                ▼                                                  │
+Agent 2 → Modeling Strategy & Training                             │
+                │                                                  │
+                ▼                                                  │
+Agent 3 → Evaluation, QA & Cross-Iteration Review                  │
+          (runs after EVERY model/iteration; owns the              │
+           experiment ledger and compares all iterations)          │
+                │                                                  │
+                ▼                                                  │
+Agent 4 → Improvement Strategist                                   │
+          (diagnoses WHERE the weakness is and routes back to      │
+           Agent 1 Phase B/C, Agent 2, or recommends stopping) ────┘
 ```
 
+Key loop rules:
+
+- Agent 3 (Evaluation) runs at the end of EVERY analysis or model training — it is
+  not a one-time gate.
+- Agent 4 NEVER retrains or re-cleans anything itself. It diagnoses root causes and
+  dispatches the work back to the agent that owns that stage.
+- Improvement iterations may change data cleaning, feature engineering, sampling,
+  model choice, or hyperparameters — whichever the evidence points to.
+- The loop ends when Agent 4 and the user agree the stopping criteria are met.
+
 Each stage produces markdown artifacts for the next agent.
+
+---
+
+# User Checkpoint Protocol (MANDATORY)
+
+Every agent (and every phase inside Agent 1) must end with a User Checkpoint before
+handing off. A checkpoint consists of:
+
+1. **Insight Summary** — 3 to 7 plain-language bullet points of what was discovered
+   or accomplished, written for the user, not for the next agent.
+2. **Visual Evidence** — show the relevant graphs/plots produced in this step
+   (rendered in the notebook and referenced in the markdown report).
+3. **Data Table** — show the relevant data table(s) if any exist for this step
+   (e.g. head of transformed dataset, missing-value summary, metric comparison table).
+4. **Joint Recommendation** — a concrete suggestion of what the user and the next
+   step should do, with reasoning. Example: "Income is heavily right-skewed and 12%
+   missing — I suggest log-transform + median imputation in the cleaning phase.
+   Do you agree, or prefer another strategy?"
+5. **User Decision** — wait for the user to approve, modify, or redirect before
+   proceeding. Only skip waiting if *yolo mode is active, but the insights, visuals,
+   and tables must still be shown.
+
+---
+
+# Context Echo Rule (MANDATORY)
+
+To guarantee agents actually build on each other's work, every agent must begin its
+session by writing a "Context Received" section that explicitly states:
+
+- Which markdown reports from previous agents it read
+- The 3–5 most important findings/decisions it is inheriting
+- How those findings will change what it does in this session
+  (e.g. "Agent 1 Phase A flagged leakage risk in `signup_date` — I will exclude it
+  from features and verify in QA")
+
+If an agent cannot state how prior findings affect its plan, it has not read them
+properly and must re-read before proceeding.
 
 ---
 
 Every agent must:
 
 1. Read all previous markdown documents before starting
-2. Continue work from the latest state
-3. Document all findings and reasoning
-4. Save outputs in structured markdown
-5. Clearly explain WHY decisions were made
-6. Avoid hidden assumptions
-7. Provide reproducible methodology
+2. Write the Context Echo section (see rule above)
+3. Continue work from the latest state
+4. Document all findings and reasoning
+5. Save outputs in structured markdown
+6. Clearly explain WHY decisions were made
+7. Avoid hidden assumptions
+8. Provide reproducible methodology
+9. Run the User Checkpoint Protocol before handing off
 
 ---
 
@@ -108,7 +174,7 @@ Every agent must:
 
 Every agent must:
 
-- Read previous markdown reports first
+- Read previous markdown reports first and echo the context received
 - Explain all reasoning
 - Document assumptions
 - Maintain work checklists
@@ -123,7 +189,8 @@ Every agent must:
 - Track risks and tradeoffs
 - Explain tradeoffs
 - Preserve reproducibility
-- Recommend the next agent
+- Share insights, graphs, and tables with the user at every checkpoint
+- Recommend the next agent (or next phase)
 - Complete all checklist items before handoff
 
 ---
@@ -137,6 +204,9 @@ Every agent must generate markdown using this structure:
 
 ## Objective
 
+## Context Received
+(Reports read, key inherited findings, and how they shape this session)
+
 ## Inputs Received
 
 ## Dataset Summary
@@ -148,6 +218,12 @@ Every agent must generate markdown using this structure:
 ## Methods Used
 
 ## Outputs Generated
+
+## Insights Shared With User
+(The checkpoint summary: insights, graph references, table references)
+
+## User Decisions
+(What the user approved, modified, or rejected at the checkpoint)
 
 ## Risks / Concerns
 
@@ -171,7 +247,24 @@ All agents should maintain:
     /validation
     /reports
     /experiments
+        experiment_ledger.md   ← owned by Agent 3, one row per iteration
     /logs
 ```
+
+---
+
+# Iteration & Versioning
+
+Because the workflow is a loop, every artifact must carry an iteration tag:
+
+```text
+cleaned_dataset_v1.parquet, cleaned_dataset_v2.parquet, ...
+engineered_features_v1.parquet, ...
+model_v1/, model_v2/, ...
+```
+
+Agent 3's `experiment_ledger.md` records, for each iteration: what changed
+(data / features / model / hyperparameters), why, all metrics, and the verdict
+versus previous iterations. This is the single source of truth for comparisons.
 
 ---

@@ -1,0 +1,24 @@
+# Feature registry — Agent 3
+
+- **`Spend_NonZeroCount`**: Count of spend columns > 0
+- **`Spend_Any`**: Indicator: TotalSpend > 0
+- **`Spend_Zero`**: Indicator: TotalSpend == 0
+- **`Spend_MeanNonZero`**: TotalSpend / Spend_NonZeroCount (0 if none)
+- **`Spend_Log1pTotal`**: log1p(TotalSpend)
+- **`CabinNumBin100`**: CabinNum bucketed by floor(CabinNum/100); -1 if missing
+- **`CryoSleep_and_ZeroSpend`**: Interaction: CryoSleep==1 and TotalSpend==0
+- **`VIP_and_HighSpend`**: Interaction: VIP==1 and TotalSpend above 90th percentile (within split)
+- **`DeckSide`**: Composite categorical: Deck + '_' + Side
+- **`AgeBin`**: Coarse age bin (child/teen/young adult/...)
+- **`GroupSize_all`**: Group size computed on combined passenger manifest (train+test)
+- **`GroupTotalSpend_all`**: Sum TotalSpend per GroupId on manifest
+- **`GroupMeanAge_all`**: Mean Age per GroupId on manifest
+- **`GroupAnyVIP_all`**: Max VIP per GroupId on manifest
+- **`GroupAnyCryo_all`**: Max CryoSleep per GroupId on manifest
+- **`GroupSpendPerPerson_all`**: GroupTotalSpend_all / GroupSize_all
+- **`GroupIsSolo_all`**: Indicator: GroupSize_all == 1
+- **`RoomService_log1p`**: log1p(RoomService)
+- **`FoodCourt_log1p`**: log1p(FoodCourt)
+- **`ShoppingMall_log1p`**: log1p(ShoppingMall)
+- **`Spa_log1p`**: log1p(Spa)
+- **`VRDeck_log1p`**: log1p(VRDeck)
