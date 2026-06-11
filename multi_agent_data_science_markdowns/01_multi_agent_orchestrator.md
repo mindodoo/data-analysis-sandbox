@@ -193,6 +193,43 @@ Every agent must:
 - Recommend the next agent (or next phase)
 - Complete all checklist items before handoff
 
+## Code Efficiency & Reuse
+
+Every agent writing notebook code must balance speed with reviewability:
+
+1. **Reuse artifacts** — do not recompute what a prior cell or agent already produced.
+   Load versioned parquet, saved models, and cached predictions instead of re-running
+   upstream steps.
+2. **Profile before optimizing** — if a cell is slow, identify the bottleneck before
+   changing code. Do not guess.
+3. **Prefer vectorized operations** — use pandas/numpy vectorization over Python loops
+   on full columns or rows.
+4. **Sample for exploration** — on datasets larger than ~100k rows, use a sample for
+   EDA plots and quick checks; run full data only for final transforms, training, and
+   evaluation.
+5. **Cache expensive intermediates** — write cleaned data, features, and predictions to
+   versioned files once; reference them in later cells and reports.
+6. **Use pipelines** — wrap preprocessing and modeling in sklearn `Pipeline` or
+   equivalent so fit/transform happens once and stays reproducible.
+7. **Freeze randomness** — set seeds once per iteration; do not re-split or re-shuffle
+   inside tuning loops unless the experiment explicitly requires it.
+8. **Budget hyperparameter search** — start with a small, coarse search; expand only
+   when validation gain is real. Use early stopping where supported.
+9. **Keep cells small and named** — one logical step per cell so the notebook stays
+   easy to review. Remove dead code paths; do not leave abandoned experiments on the
+   main execution path.
+10. **Explain slow cells** — if a cell is expected to take more than ~60 seconds, note
+    why in a brief markdown comment above it.
+
+Agent-specific reminders:
+
+- **Agent 1**: `df.info()` and `describe()` before heavy plots; save cleaned/feature
+  datasets to parquet at the end of each phase.
+- **Agent 2**: train on frozen splits; use `n_jobs=-1` where safe; prefer fast
+  baselines (logistic regression, HistGradientBoosting, LightGBM) before heavy models.
+- **Agent 3**: evaluate from saved predictions and models — do not retrain just to
+  produce evaluation plots.
+
 ---
 
 # Mandatory Documentation Structure
