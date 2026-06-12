@@ -14,19 +14,21 @@ This log tracks Kaggle leaderboard (LB) outcomes for each submission artifact.
 | 6 | `submission_stacked_safe_v2_t0.500.csv` | Leakage-safe stack v2 (fixed threshold = 0.500) | **0.80289** | Tied best |
 | 7 | `submission_catboost_v2.csv` | Multi-agent v2: new cleaning + features + tuned CatBoost (OOF 0.8143, t=0.500) | **0.80430** | **New best** — beats v1 best by +0.00141 |
 | 8 | `submission_cohort_v2.csv` | v2.4 cohort-specific models by HomePlanet (cohort features + per-cohort configs, OOF 0.8181, t=0.500) | **0.80406** | 2nd best; OOF edge (+0.0038) did not transfer — consistent with per-cohort config selection bias |
+| 9 | `submission_catboost_v3.csv` | v3.1 pipeline (updated split workflow, same features/hparams as v2.1, refit full train, t=0.500) | **0.80383** | 3rd best LB; −0.00047 vs v2.1 (0.80430); still beats v1 best (+0.00094) |
 
 ## Current Best
 
 - **Best file:** `submission_catboost_v2.csv` (multi-agent v2 global pipeline)
 - **Best LB Accuracy:** **0.80430**
-- Previous best: 0.80289 (v1 stacked ensembles, t=0.500)
+- v3.1 LB: **0.80383** (−0.00047 vs v2.1 — within noise; same pipeline, updated workflow)
+- Previous v1 best: 0.80289 (stacked ensembles, t=0.500)
 
 ## Quick Observations
 
 - OOF ranking did not fully match LB ranking in this round.
 - The fixed-threshold stack (`t=0.500`) generalized better than the OOF-optimized threshold (`t=0.460`).
 - CatBoost native improved OOF in offline evaluation but underperformed on LB.
-- Leakage-safe stack v2 improved robustness, but the `t=0.500` variant still generalized best on LB.
+- v3.1 LB: OOF↔LB gap similar to v2.1 pattern; updated split workflow did not improve LB.
 
 ## Next Logging Template
 

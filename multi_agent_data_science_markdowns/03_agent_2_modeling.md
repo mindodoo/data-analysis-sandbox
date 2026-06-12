@@ -90,17 +90,19 @@ Explain:
 
 ### Data Splitting Strategy
 
-Possible approaches:
+Agent 1 prepares the frozen **train/eval holdout** from the labeled training data
+(`train_split_vN.parquet`, `eval_split_vN.parquet`, `split_manifest_vN.md`). Use
+these artifacts — do not re-split the training data on the first run.
 
-- Train/validation/test
-- Stratified split
-- Group split
-- Time-based split
-- Cross-validation
+Within the train partition, you may use cross-validation for tuning:
 
-The split strategy is defined ONCE on the first run and frozen for all later
-iterations, so results stay comparable. Changing it requires explicit user approval
-and a note in the experiment ledger.
+- Stratified K-fold
+- Group K-fold
+- Time-series split
+
+The eval holdout from Agent 1 is for unbiased checkpoint evaluation only. The
+external test set (if any) stays untouched until final submission. Split changes
+require explicit user approval and a note in the experiment ledger.
 
 ---
 
@@ -135,8 +137,9 @@ Present to the user:
 
 ```markdown
 - [ ] Write Context Received section (prior reports + improvement brief if any)
+- [ ] (First run) Load and use Agent 1's frozen train/eval split artifacts
+- [ ] (First run) Define inner CV strategy on train partition only
 - [ ] (First run) Build and evaluate baseline models
-- [ ] (First run) Define and freeze split strategy
 - [ ] Select candidate models and justify selection
 - [ ] Train candidate models
 - [ ] Tune hyperparameters

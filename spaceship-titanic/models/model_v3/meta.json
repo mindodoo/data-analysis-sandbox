@@ -1,0 +1,49 @@
+{
+  "model": "catboost_tuned",
+  "oof_acc": 0.8125358577165807,
+  "holdout_acc": 0.8117373619988378,
+  "params": {
+    "iterations": 600,
+    "learning_rate": 0.08,
+    "depth": 4,
+    "l2_leaf_reg": 3.0
+  },
+  "features": [
+    "Age",
+    "CabinNum",
+    "SpendNACount",
+    "RoomService",
+    "FoodCourt",
+    "ShoppingMall",
+    "Spa",
+    "VRDeck",
+    "TotalSpend",
+    "HasSpend",
+    "LuxurySpend",
+    "BasicSpend",
+    "GroupSize",
+    "IsAlone",
+    "FamilySize",
+    "CabinRegion",
+    "HomePlanet",
+    "Destination",
+    "Deck",
+    "Side",
+    "AgeBin",
+    "DeckSide",
+    "CryoSleep",
+    "VIP"
+  ],
+  "cat_features": [
+    "HomePlanet",
+    "Destination",
+    "Deck",
+    "Side",
+    "AgeBin",
+    "DeckSide"
+  ],
+  "cv": "GroupKFold(5) on train_split by GroupId",
+  "holdout": "eval_split_v3",
+  "threshold": 0.5,
+  "seed": 42
+}

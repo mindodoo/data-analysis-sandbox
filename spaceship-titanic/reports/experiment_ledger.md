@@ -15,8 +15,30 @@ v1 rows reconstructed from `leaderboard_tracking.md`, `improvement_opportunities
 | v2.2 | +5 contextual features (improvement brief v2.2) | feature | 0.8144 | — | — | — | tie (+0.0001, noise) — success criteria NOT met → STOP recommended |
 | v2.3 | Cohort-specific models by HomePlanet, per-cohort features + per-cohort tuned CatBoost | feature + model + hparam | 0.8162 | — | — | — | +0.0019 vs v2.1 — < 1 SE, OOF-selected configs |
 | v2.4 | + cohort-specific features (spend shares, CryoDeck, group flags, CabinNumFine) + 13-config search per cohort | feature + hparam | 0.8181 | 0.80406 | — | — | best OOF but LB < v2.1 (−0.00024) — OOF edge did not transfer (selection bias confirmed); 2nd best LB overall |
+| v3.1 | Updated workflow (mandatory train/eval split) + same cleaning/features/hparams as v2.1 | methodology | 0.8125† | **0.80383** | 0.8164 | 0.9005 | **LB −0.00047 vs v2.1** (within noise); beats v1 best (+0.00094); v2.1 remains canonical |
+| v3.2 | +4 cluster features (HomePlanetDeck, EarthZeroSpend, DeckGFlag, SpendPerGroupMember) | feature | 0.8112 | — | — | — | **NOT met criteria** — OOF −0.0013, Earth error +0.1pp; holdout +0.0047 (noise); STOP recommended |
 
-## LB Outcome (closes the v2 loop)
+† v3.1 OOF is on train_split (6972 rows); v2.1 OOF on full train (8693 rows) — not directly comparable.
+Holdout eval_split accuracy: **0.8117** (v3.1), **0.8164** (v3.2).
+
+## v3 LB Outcome (closes the v3 loop)
+
+- **`submission_catboost_v3.csv`: LB 0.80383** — 3rd best overall, **−0.00047 vs v2.1** (0.80430).
+- Still beats v1 best (0.80289) by +0.00094; essentially tied with v2.1 given LB noise (~±0.001).
+- Same features + hparams as v2.1; updated train/eval split workflow adds rigor without LB gain.
+- v3.2 iteration correctly stopped — would not have helped (OOF regressed).
+- **Canonical model remains v2.1 / v3.1-equivalent:** `submission_catboost_v2.csv` (LB best) or v3 pipeline for reproducibility.
+
+## v3 Submission (logged)
+
+- **`submission_catboost_v3.csv`** — v3.1 pipeline refit on full train · **LB 0.80383**
+
+## v3.2 Comparison Analysis
+
+- Explicit Earth/Deck-G flags did not beat v3.1 on OOF or segment errors.
+- Holdout uptick (+0.0047) without OOF gain mirrors v2 OOF↔holdout noise pattern — do not chase.
+- Earth/Deck-G cluster likely irreducible (same conclusion as v2.2 Agent 4).
+- **Canonical for LB:** v2.1 `submission_catboost_v2.csv` (LB **0.80430**). v3.1 logged at **0.80383** (−0.00047).
 
 - **v2.1 global CatBoost: LB 0.80430 — new project best** (v1 best was 0.80289).
 - v2.4 cohort models: LB 0.80406 — also beats v1 best, but loses the head-to-head.

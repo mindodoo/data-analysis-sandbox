@@ -34,14 +34,29 @@ noise floors ≈ 1 SE), when to stop iterating, and how to find genuinely new si
 same pipeline. Accuracy beyond ~0.805 LB likely requires ideas the current agent
 loop does not yet generate on its own.
 
+## Multi-Agent Workflow Version
+
+**Current workflow: version 2.1** — defined in `multi_agent_data_science_markdowns/`.
+
+| Version | Summary |
+|---|---|
+| **Version 1** | Six agents, each focused on a separate data-analysis task specifically for data modelling (EDA, cleaning, feature engineering, modeling, validation, optimization as distinct roles). |
+| **Version 2** | Reevaluated and merged redundant roles; folded related responsibilities into fewer agents to close handoff gaps. |
+| **Version 2.1** | Improved AI token consumption and closed more gaps — especially for **Agents 2, 3, and 4** (modeling, evaluation, and improvement strategist): clearer run modes, mandatory train/eval split before cleaning, experiment ledger ownership, and improvement briefs that dispatch work without duplicating training. |
+
+The Spaceship Titanic **v3 notebook run** (`st_agents_v3.ipynb`) exercises the **v2.1 workflow** on the same competition (LB **0.80383**, essentially tied with v2.1 pipeline LB **0.80430**).
+
 ## Final Results
 
 | Iteration | Approach | OOF (GroupKFold-5) | Kaggle LB |
 |---|---|---:|---:|
 | v1 | Tuned HistGradientBoosting + stacked ensembles | 0.8108 | 0.80289 |
-| **v2.1** | **New cleaning + 10 features + tuned CatBoost (canonical)** | 0.8143 | **0.80430** |
+| **v2.1** | **New cleaning + 10 features + tuned CatBoost (canonical LB best)** | 0.8143 | **0.80430** |
 | v2.2 | + contextual features | 0.8144 | — (stopped, noise) |
 | v2.4 | Cohort-specific models by HomePlanet | 0.8181 | 0.80406 |
+| v3.1 | v2.1 workflow + mandatory train/eval split (same features/hparams) | 0.8125† | 0.80383 |
+
+† v3.1 OOF on train_split (6972 rows); v2.1 OOF on full train (8693 rows).
 
 ## The Agent Workflow
 
@@ -64,17 +79,17 @@ decision, and no handoff happens without user review.
 ## Repository Layout
 
 ```text
-multi_agent_data_science_markdowns/   the agent role definitions (the "workflow")
+multi_agent_data_science_markdowns/   agent role definitions (workflow v2.1)
 spaceship-titanic/
     data/            raw Kaggle train/test (never modified by agents)
-    notebooks/       st_agents_v2.ipynb — the full v2 agent run, end to end
+    notebooks/       st_agents_v2.ipynb, st_agents_v3.ipynb — full agent runs
     reports/         agent reports, experiment ledger, figures, versioned artifacts
-    models/          canonical model (model_v2: tuned CatBoost)
+    models/          canonical model (model_v2: tuned CatBoost, LB best)
     submissions/     generated submission files + leaderboard tracking
 scripts/             helper scripts
 ```
 
-Key reading order for the v2 experiment: `spaceship-titanic/notebooks/st_agents_v2.ipynb`
-(narrative + code), then `spaceship-titanic/reports/experiment_ledger.md` (what was
-tried and what actually worked), then `reports/leaderboard_tracking.md` (LB ground
-truth).
+Key reading order: `spaceship-titanic/notebooks/st_agents_v3.ipynb` (v2.1 workflow,
+latest run), then `st_agents_v2.ipynb` (v2 competition run), then
+`spaceship-titanic/reports/experiment_ledger.md` (what was tried and what worked),
+then `reports/leaderboard_tracking.md` (LB ground truth).
